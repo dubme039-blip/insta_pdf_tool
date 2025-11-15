@@ -3,20 +3,31 @@ from PIL import Image
 from fpdf import FPDF
 import io
 import tempfile
+import os
+import requests
 from openai import OpenAI
 
 client = OpenAI()
 
-# 日本語フォント（ipaexg.ttf）を利用
+# ----------------------------------------
+# フォント自動ダウンロード設定
+# ----------------------------------------
+FONT_URL = "https://moji.or.jp/wp-content/ipafont/IPAexfont/ipaexg.ttf"
 FONT_PATH = "ipaexg.ttf"
+
+if not os.path.exists(FONT_PATH):
+    r = requests.get(FONT_URL)
+    with open(FONT_PATH, "wb") as f:
+        f.write(r.content)
+    st.info("日本語フォントを自動でダウンロードしました。")
 
 st.set_page_config(page_title="Instagram投稿作成ツール", layout="wide")
 st.title("📸 Instagram投稿作成ツール（iPhone対応）")
 
 # ------------------------------
-# ステップ1: 表紙画像アップロード
+# ステップ1: 表紙画像アップロード（任意）
 # ------------------------------
-st.header("ステップ1: 表紙画像アップアップ（任意）")
+st.header("ステップ1: 表紙画像アップロード（任意）")
 cover_file = st.file_uploader(
     "表紙として使う画像をアップロード（任意）",
     type=["png", "jpg", "jpeg"]
