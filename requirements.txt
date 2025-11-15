@@ -1,5 +1,5 @@
 streamlit
 pillow
-fpdf
+fpdf2
 requests
 openai>=1.0.0
