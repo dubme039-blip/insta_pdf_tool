@@ -7,25 +7,33 @@ import os
 import requests
 from openai import OpenAI
 
+# OpenAI クライアント
 client = OpenAI()
 
 # ----------------------------------------
-# フォント自動ダウンロード設定
+# フォント自動ダウンロード設定（公式GitHub版）
 # ----------------------------------------
-FONT_URL = "https://moji.or.jp/wp-content/ipafont/IPAexfont/ipaexg.ttf"
 FONT_PATH = "ipaexg.ttf"
+FONT_URL = "https://raw.githubusercontent.com/ipa-font/IPAexFont/main/ipaexg.ttf"
 
 if not os.path.exists(FONT_PATH):
+    st.info("日本語フォントをダウンロード中…")
     r = requests.get(FONT_URL)
-    with open(FONT_PATH, "wb") as f:
-        f.write(r.content)
-    st.info("日本語フォントを自動でダウンロードしました。")
+    if r.status_code == 200:
+        with open(FONT_PATH, "wb") as f:
+            f.write(r.content)
+        st.success("日本語フォントのダウンロード完了！")
+    else:
+        st.error("フォントのダウンロードに失敗しました。")
 
+# ------------------------------
+# Streamlit ページ設定
+# ------------------------------
 st.set_page_config(page_title="Instagram投稿作成ツール", layout="wide")
 st.title("📸 Instagram投稿作成ツール（iPhone対応）")
 
 # ------------------------------
-# ステップ1: 表紙画像アップロード（任意）
+# 表紙画像アップロード（任意）
 # ------------------------------
 st.header("ステップ1: 表紙画像アップロード（任意）")
 cover_file = st.file_uploader(
@@ -34,7 +42,7 @@ cover_file = st.file_uploader(
 )
 
 # ------------------------------
-# ステップ2: 商品画像アップロード
+# 商品画像アップロード
 # ------------------------------
 st.header("ステップ2: 商品画像アップロード")
 uploaded_files = st.file_uploader(
@@ -44,7 +52,7 @@ uploaded_files = st.file_uploader(
 )
 
 # ------------------------------
-# ステップ3: 商品タイトル入力
+# 商品タイトル入力
 # ------------------------------
 titles = []
 if uploaded_files:
@@ -54,7 +62,7 @@ if uploaded_files:
         titles.append(title)
 
 # ------------------------------
-# ステップ4: 商品説明文生成
+# 商品説明文生成
 # ------------------------------
 st.header("ステップ4: 商品説明文をAIで生成")
 descriptions = []
@@ -83,7 +91,7 @@ for idx, title in enumerate(titles):
         descriptions.append("")
 
 # ------------------------------
-# ステップ5: PDF生成
+# PDF生成
 # ------------------------------
 st.header("ステップ5: PDF生成")
 if st.button("PDF生成"):
